@@ -17,7 +17,7 @@ Videos are entities that describe a video at the video store.  They contain:
 - release date datetime of when the video was release_date
 - total inventory of how many copies are owned by the video store
 
-Our goal for this wave is to be able to do all CRUD actions for these two entities.
+Our goal for this wave is to be able to do all CRUD actions for these two entities. We will create RESTful routes for this different operations. 
 
 ## Error Handling Requirements for Every Endpoint
 
@@ -58,7 +58,7 @@ Every endpoint must serve JSON data, and must use HTTP response codes to indicat
 
 ## `/customers` CRUD
 
-Required endpoints:
+Required RESTful endpoints:
 
 1. GET `/customers`
 1. GET `/customers/<id>`
@@ -226,7 +226,7 @@ Status: `200`
 
 ## `/videos` CRUD
 
-Required endpoints:
+Required RESTful endpoints:
 
 1. GET `/videos`
 1. GET `/vidoes/<id>`
