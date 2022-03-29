@@ -55,6 +55,16 @@ def one_customer(app):
     db.session.commit()
 
 @pytest.fixture
+def second_customer(app):
+    new_customer = Customer(
+        name="Second Customer",
+        postal_code="12345",
+        phone="234-234-2345"
+    )
+    db.session.add(new_customer)
+    db.session.commit()
+
+@pytest.fixture
 def one_checked_out_video(app, client, one_customer, one_video):
     response = client.post("/rentals/check-out", json={
         "customer_id": 1,
