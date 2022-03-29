@@ -61,7 +61,7 @@ def test_checkout_video_no_customer_id(client, one_video, one_customer):
 
     assert response.status_code == 400
 
-def test_checkout_video_no_inventory(client, one_checked_out_video):
+def test_checkout_video_no_inventory(client, one_checked_out_video, second_customer):
     response = client.post("/rentals/check-out", json={
         "customer_id": 2,
         "video_id": 1
@@ -195,7 +195,7 @@ def test_can_delete_video_with_rental(client, one_checked_out_video):
 
 def test_cant_checkout_video_twice(client, one_checked_out_video):
     # Act
-    response = client.post("/rentals/check-in", json={
+    response = client.post("/rentals/check-out", json={
         "customer_id": 1,
         "video_id": 1
     })
@@ -222,7 +222,3 @@ def test_cant_checkin_video_twice(client, one_checked_out_video):
 
     # Assert 
     assert response.status_code == 400
-
-
-
-
