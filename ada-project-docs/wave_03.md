@@ -1,8 +1,4 @@
-# OPTIONAL Wave 3: Enhancements & Deployment
-
-These really are **optional** - if you've gotten here and you have time left, that means you're moving speedy fast!
-
-## Enhancements
+# Wave 3: Enhancements & Deployment
 
 ### Query Parameters
 Any endpoint that returns a list should accept 3 _optional_ query parameters:
@@ -27,20 +23,8 @@ Things to note:
 - If the client requests both sorting and pagination, pagination should be relative to the sorted order
 - Check out the [paginate method](https://flask-sqlalchemy.palletsprojects.com/en/2.x/api/#flask_sqlalchemy.BaseQuery.paginate)
 
-### More Endpoints: Inventory Management
-All these endpoints should support all 3 query parameters. All fields are sortable.
-
-#### `GET /rentals/overdue`
-List all customers with overdue videos
-
-Fields to return:
-- `video_id`
-- `title`
-- `customer_id`
-- `name`
-- `postal_code`
-- `checkout_date`
-- `due_date`
+### Extra Endpoint: Inventory Management
+This endpoint should support all 3 query parameters. All fields are sortable.
 
 
 #### `GET /videos/<id>/history`
@@ -70,9 +54,6 @@ Fields to return:
 
 ## Deployment
 
-Consider deploying your API to Heroku following the instructions from Learn and Task List.  
+Deploying your API to Heroku following the instructions from Learn and Task List.  
 
 
-## CLI
-
-Create a Command Line Interface (CLI) program as a client for the Retro Video Store API.

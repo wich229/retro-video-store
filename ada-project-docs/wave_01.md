@@ -9,7 +9,8 @@ Customers are entities that describe a customer at the video store.  They contai
 - name of the customer
 - postal code of the customer
 - phone number of the customer
-- register_at datetime of when the customer was added to the system.
+- register_at datetime of when the customer was added to the system
+- videos_checked_out_count of how many videos the customer currently has checked out
 
 Videos are entities that describe a video at the video store.  They contain:
 
