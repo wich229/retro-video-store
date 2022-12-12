@@ -1,13 +1,18 @@
 # Wave 3: Enhancements & Deployment
 
-### Query Parameters
-All customer endpoints which return a list should accept 3 _optional_ query parameters:
+## Query Parameters
+The following 3 _optional_ query parameters:
 
 | Name   | Value   | Description
 |--------|---------|------------
 | `sort` | string  | Sort objects by this field, in ascending order
 | `n`    | integer | Number of responses to return per page
 | `p`    | integer | Page of responses to return
+
+should be accepted by the following three endpoints:
+- `GET /customers`
+- `GET /customers/<id>/rentals`
+- `GET /videos/<id>/rentals`
 
 So, for an API endpoint like `GET /customers`, the following requests should be valid:
 - `GET /customers`: All customers, sorted by ID
@@ -18,14 +23,25 @@ So, for an API endpoint like `GET /customers`, the following requests should be 
 Things to note:
 - Possible sort fields:
   - Customers can be sorted by `name`, `registered_at` and `postal_code`
+  - Videos can be sorted by `title` and `release_date`
 - If the client requests both sorting and pagination, pagination should be relative to the sorted order
 - Check out the [paginate method](https://flask-sqlalchemy.palletsprojects.com/en/2.x/api/#flask_sqlalchemy.BaseQuery.paginate)
 
-### Extra Endpoint: Inventory Management
+
+#### Errors and Edge Cases to Check
+
+- The API should default to sorting by `id` if no `sort` parameter is specified
+- The API should default to sorting by `id` if a value other than `name`, `registered_at`, or `postal_code` is passed in for the parameter `sort`
+- The API should default to returning all customers in a single page if no number of per page responses is specified
+- The API should default to returning all customers in a single page if an invalid number of per page responses is specified
+- The API should default to returning the first page if no page is specified
+- The API should default to returning the first page if an invalid page is specified
+
+## Extra Endpoint: Inventory Management
 This endpoint should support all 3 query parameters. All fields are sortable.
 
-#### `GET /customers/<id>/history`
-List the videos a customer has checked out _in the past_
+### `GET /customers/<id>/history`
+List the videos a customer has checked out _in the past_. Current rentals should not be included.                                                                                  
 
 URI parameters:
 - `id`: Customer ID
@@ -34,6 +50,10 @@ Fields to return:
 - `title`
 - `checkout_date`
 - `due_date`
+
+#### Errors and Edge Cases to Check
+- The API should return back detailed errors and a status `404: Not Found` if the customer does not exist
+- The API should return an empty list if the customer has no rental history
 
 ## Deployment
 

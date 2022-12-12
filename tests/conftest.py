@@ -49,7 +49,7 @@ def second_video(app):
     new_video = Video(
         title="Video Two", 
         release_date="12-31-2000",
-        total_inventory=VIDEO_INVENTORY,
+        total_inventory=1,
         )
     db.session.add(new_video)
     db.session.commit()
@@ -59,7 +59,17 @@ def third_video(app):
     new_video = Video(
         title="Video Three", 
         release_date="01-02-2001",
-        total_inventory=VIDEO_INVENTORY,
+        total_inventory=1,
+        )
+    db.session.add(new_video)
+    db.session.commit()
+
+@pytest.fixture
+def three_copies_video(app):
+    new_video = Video(
+        title=VIDEO_TITLE, 
+        release_date=VIDEO_RELEASE_DATE,
+        total_inventory=5,
         )
     db.session.add(new_video)
     db.session.commit()
@@ -102,6 +112,20 @@ def one_checked_out_video(app, client, one_customer, one_video):
     })
 
 @pytest.fixture
+def second_checked_out_video(app, client, one_customer, second_video):
+    response = client.post("/rentals/check-out", json={
+        "customer_id": 1,
+        "video_id": 2
+    })
+
+@pytest.fixture
+def third_checked_out_video(app, client, one_customer, third_video):
+    response = client.post("/rentals/check-out", json={
+        "customer_id": 1,
+        "video_id": 3
+    })
+
+@pytest.fixture
 def one_returned_video(app, client, one_customer, second_video):
     client.post("/rentals/check-out", json={
         "customer_id": 1,
@@ -113,7 +137,25 @@ def one_returned_video(app, client, one_customer, second_video):
         "video_id": 2
     })
 
+@pytest.fixture
+def customer_one_video_three(app, client, one_customer, three_copies_video):
+    response = client.post("/rentals/check-out", json={
+        "customer_id": 1,
+        "video_id": 1
+    })
 
+@pytest.fixture
+def customer_two_video_three(app, client, second_customer, three_copies_video):
+    response = client.post("/rentals/check-out", json={
+        "customer_id": 2,
+        "video_id": 1
+    })
 
+@pytest.fixture
+def customer_three_video_three(app, client, third_customer, three_copies_video):
+    response = client.post("/rentals/check-out", json={
+        "customer_id": 3,
+        "video_id": 1
+    })
 
 

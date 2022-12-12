@@ -41,18 +41,22 @@ def order_customers(sort_query):
         customers = Customer.query.order_by(Customer.id.asc())
     return customers
 
-
+def validate_page_params(n, p):
+    try:
+        n = int(n)
+    except:
+        n = None
+    try:
+        p = int(p)
+    except:
+        p = None
+    return n, p
 
     # CUSTOMERS
 @customers_bp.route("", methods=["GET"])
 def get_all_customers():
     sort_query = request.args.get("sort")
-    per_page = request.args.get("n")
-    if per_page:
-        per_page = int(per_page)
-    pages = request.args.get("p")
-    if pages:
-        pages = int(pages)
+    per_page, pages = validate_page_params(request.args.get("n"), request.args.get("p"))
     customer_query = order_customers(sort_query)
     customer_page = customer_query.paginate(page=pages,per_page=per_page)
     customers = customer_page.items
@@ -110,8 +114,11 @@ def handle_one_customer(customer_id):
 @customers_bp.route("/<customer_id>/rentals", methods = ["GET"])
 def get_videos_from_customer(customer_id):
     customer = validate_model(Customer, customer_id)
-    videos = db.session.query(Video).join(Rental).filter_by(customer_id=customer_id).filter_by(checked_in = False)
-    return jsonify([video.to_dict() for video in videos])
+    sort_param = request.args.get("sort")
+    per_page, page = validate_page_params(request.args.get("n"), request.args.get("p"))
+    videos = order_videos(sort_param).join(Rental).filter_by(customer_id=customer_id).filter_by(checked_in = False)
+    video_page = videos.paginate(page = page, per_page = per_page)
+    return jsonify([video.to_dict() for video in video_page.items])
 
 @customers_bp.route("/<customer_id>/history", methods = ["GET"])
 def get_rental_history_from_customer(customer_id):
@@ -133,11 +140,11 @@ VIDEO_PARAMS = ("title", "release_date", "total_inventory")
 
 def order_videos(sort_query):
     if sort_query == "title":
-        videos = Video.query.order_by(Video.title.asc()).all()
+        videos = Video.query.order_by(Video.title.asc())
     elif sort_query == "release_date":
-        videos = Video.query.order_by(Video.release_date.asc()).all()
+        videos = Video.query.order_by(Video.release_date.asc())
     else:
-        videos = Video.query.order_by(Video.id.asc()).all()
+        videos = Video.query.order_by(Video.id.asc())
     return videos
 
 @videos_bp.route("", methods=["GET"])
@@ -194,8 +201,11 @@ def handle_one_video(video_id):
 @videos_bp.route("/<video_id>/rentals", methods=["GET"])
 def get_customers_from_video(video_id):
     video = validate_model(Video, video_id)
-    customers = db.session.query(Customer).join(Rental).filter_by(video_id = video_id).filter_by(checked_in = False)
-    return jsonify([customer.to_dict() for customer in customers])
+    sort_param = request.args.get("sort")
+    per_page, page = validate_page_params(request.args.get("n"), request.args.get("p"))
+    customers = order_customers(sort_param).join(Rental).filter_by(video_id=video_id).filter_by(checked_in = False)
+    customer_page = customers.paginate(page = page, per_page = per_page)
+    return jsonify([customer.to_dict() for customer in customer_page.items])
 
 
 
@@ -224,11 +234,9 @@ def check_out():
         video_id=video_id,
         due_date = due_date
     )
-
-    db.session.add(rental)
     customer.videos_checked_out_count += 1
     video.available_inventory -= 1
-
+    db.session.add(rental)
     db.session.commit()
     return {
         "customer_id": customer_id,
