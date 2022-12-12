@@ -37,6 +37,20 @@ Fields to return:
 
 ## Deployment
 
-Deploying your API to Heroku following the instructions from Learn and Task List.  
+Deploy this project to Heroku.
+
+Then, add some Customer, Video, and Rental records to the production database.
+
+Be sure to grab the URL of your deployed app. It will be submitted at the time of project submission.
+
+### Tips
+- When unexpected issues come up, employ all of your debugging skills:
+  - Write down what step/command created teh issue
+  - Write down how you observe the issue
+  - Attempt to recreate the issue locally
+  - Use Postman, the browser, and the debugger tools
+  - Use the Heroku logs
+  - Research error messages
+  - Rubber duck and ask for help 
 
 
