@@ -30,15 +30,36 @@ def validate_model(cls, model_id):
     
     return model
 
+def order_customers(sort_query):
+    if sort_query == "name":
+        customers = Customer.query.order_by(Customer.name.asc())
+    elif sort_query == "postal_code":
+        customers = Customer.query.order_by(Customer.postal_code.asc())
+    elif sort_query == "postal_code":
+        customers = Customer.query.order_by(Customer.registered_at.asc())
+    else:
+        customers = Customer.query.order_by(Customer.id.asc())
+    return customers
 
 
-# CUSTOMERS
+
+    # CUSTOMERS
 @customers_bp.route("", methods=["GET"])
 def get_all_customers():
-    customers = Customer.query.all()
+    sort_query = request.args.get("sort")
+    per_page = request.args.get("n")
+    if per_page:
+        per_page = int(per_page)
+    pages = request.args.get("p")
+    if pages:
+        pages = int(pages)
+    customer_query = order_customers(sort_query)
+    customer_page = customer_query.paginate(page=pages,per_page=per_page)
+    customers = customer_page.items
     customers_response = []
     for customer in customers:
         customers_response.append(customer.to_dict())
+    print(customers_response)
     return jsonify(customers_response)
 
 
@@ -89,17 +110,40 @@ def handle_one_customer(customer_id):
 @customers_bp.route("/<customer_id>/rentals", methods = ["GET"])
 def get_videos_from_customer(customer_id):
     customer = validate_model(Customer, customer_id)
-    videos = db.session.query(Video).join(Rental).filter_by(customer_id=customer_id)
+    videos = db.session.query(Video).join(Rental).filter_by(customer_id=customer_id).filter_by(checked_in = False)
     return jsonify([video.to_dict() for video in videos])
+
+@customers_bp.route("/<customer_id>/history", methods = ["GET"])
+def get_rental_history_from_customer(customer_id):
+    customer = validate_model(Customer, customer_id)    
+    rental_history =db.session.query(Video, Rental).join(Rental).filter_by(customer_id=customer_id).filter_by(checked_in = True).all()
+    rental_response = []
+    for video, rental in rental_history:
+        rental_response.append({
+            "title": video.title,
+            "checkout_date": rental.due_date - timedelta(days=7),
+            "due_date": rental.due_date
+        })
+    return jsonify(rental_response)
 
 
 # VIDEOS
 videos_bp = Blueprint("videos", __name__, url_prefix="/videos")
 VIDEO_PARAMS = ("title", "release_date", "total_inventory")
 
+def order_videos(sort_query):
+    if sort_query == "title":
+        videos = Video.query.order_by(Video.title.asc()).all()
+    elif sort_query == "release_date":
+        videos = Video.query.order_by(Video.release_date.asc()).all()
+    else:
+        videos = Video.query.order_by(Video.id.asc()).all()
+    return videos
+
 @videos_bp.route("", methods=["GET"])
 def get_all_videos():
-    videos = Video.query.all()
+    sort_query = request.args.get("sort")
+    videos = order_videos(sort_query)
     videos_response = []
     for video in videos:
         videos_response.append(video.to_dict())
@@ -150,7 +194,7 @@ def handle_one_video(video_id):
 @videos_bp.route("/<video_id>/rentals", methods=["GET"])
 def get_customers_from_video(video_id):
     video = validate_model(Video, video_id)
-    customers = db.session.query(Customer).join(Rental).filter_by(video_id = video_id)
+    customers = db.session.query(Customer).join(Rental).filter_by(video_id = video_id).filter_by(checked_in = False)
     return jsonify([customer.to_dict() for customer in customers])
 
 
@@ -210,7 +254,9 @@ def check_in():
         return {"message": f"No outstanding rentals for customer {customer_id} and video {video_id}"}, 400
     
     for rental in rentals:
-        db.session.delete(rental)
+        if rental.checked_in:
+            return {"message": f"Customer {customer_id} already checked in video {video_id}"}, 400
+        rental.checked_in = True
     customer.videos_checked_out_count -= 1
     video.available_inventory += 1
 

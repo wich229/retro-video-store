@@ -7,3 +7,4 @@ class Rental(db.Model):
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     video_id = db.Column(db.Integer, db.ForeignKey('video.id'))
     due_date = db.Column(db.Date)
+    checked_in = db.Column(db.Boolean, default = False)
