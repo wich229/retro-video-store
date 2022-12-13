@@ -109,7 +109,7 @@ def test_get_customers_sorted_by_postal_code(client, one_customer, second_custom
 
 def test_paginate_per_page_greater_than_num_customers(client, one_customer):
     # Arrange
-    data = {"n": 5, "p": 1}
+    data = {"per_page": 5, "page": 1}
 
     # Act
     response = client.get("/customers", query_string = data)
@@ -126,7 +126,7 @@ def test_paginate_per_page_greater_than_num_customers(client, one_customer):
 
 def test_get_second_page_of_customers(client, one_customer, second_customer):
     # Arrange
-    data = {"n": 1, "p": 2}
+    data = {"per_page": 1, "page": 2}
 
     # Act
     response = client.get("/customers", query_string = data)
@@ -143,7 +143,7 @@ def test_get_second_page_of_customers(client, one_customer, second_customer):
     
 def test_get_first_page_of_customers_grouped_by_two(client, one_customer, second_customer, third_customer):
     # Arrange
-    data = {"n": 2, "p": 1}
+    data = {"per_page": 2, "page": 1}
 
     # Act
     response = client.get("/customers", query_string = data)
@@ -164,7 +164,7 @@ def test_get_first_page_of_customers_grouped_by_two(client, one_customer, second
 
 def test_get_second_page_of_customers_grouped_by_two(client, one_customer, second_customer, third_customer):
     # Arrange
-    data = {"n": 2, "p": 2}
+    data = {"per_page": 2, "page": 2}
 
     # Act
     response = client.get("/customers", query_string = data)
@@ -181,7 +181,7 @@ def test_get_second_page_of_customers_grouped_by_two(client, one_customer, secon
 
 def test_get_customers_no_page(client, one_customer, second_customer, third_customer):
     # Arrange
-    data = {"n": 2}
+    data = {"per_page": 2}
 
     # Act
     response = client.get("/customers", query_string = data)
@@ -202,7 +202,7 @@ def test_get_customers_no_page(client, one_customer, second_customer, third_cust
 
 def test_get_customers_sorted_and_paginated(client, one_customer, second_customer, third_customer):
     # Arrange
-    data = {"n": 2, "sort": "name"}
+    data = {"per_page": 2, "sort": "name"}
 
     # Act
     response = client.get("/customers", query_string = data)
@@ -245,7 +245,7 @@ def test_get_customers_invalid_sort_param(client, one_customer, second_customer)
 
 def test_get_customers_invalid_n_param(client, one_customer, second_customer):
     # Arrange
-    data = {"n": "invalid"}
+    data = {"per_page": "invalid"}
 
     # Act
     response = client.get("/customers", query_string = data)
@@ -266,7 +266,7 @@ def test_get_customers_invalid_n_param(client, one_customer, second_customer):
 
 def test_get_customers_invalid_p_param(client, one_customer, second_customer):
     # Arrange
-    data = {"p": "invalid"}
+    data = {"page": "invalid"}
 
     # Act
     response = client.get("/customers", query_string = data)
@@ -333,7 +333,7 @@ def test_get_rentals_sorted_by_title(client, one_checked_out_video, second_check
 
 def test_get_paginate_n_greater_than_rentals(client, one_checked_out_video):
     # Arrange
-    data = {"n": 5, "p": 1}
+    data = {"per_page": 5, "page": 1}
 
     # Act
     response = client.get("/customers/1/rentals", query_string = data)
@@ -349,7 +349,7 @@ def test_get_paginate_n_greater_than_rentals(client, one_checked_out_video):
 
 def test_get_second_page_of_rentals(client, one_checked_out_video, second_checked_out_video):
     # Arrange
-    data = {"n": 1, "p": 2}
+    data = {"per_page": 1, "page": 2}
 
     # Act
     response = client.get("/customers/1/rentals", query_string = data)
@@ -365,7 +365,7 @@ def test_get_second_page_of_rentals(client, one_checked_out_video, second_checke
     
 def test_get_first_page_of_rentals_grouped_by_two(client, one_checked_out_video, second_checked_out_video, third_checked_out_video):
     # Arrange
-    data = {"n": 2, "p": 1}
+    data = {"per_page": 2, "page": 1}
 
     # Act
     response = client.get("/customers/1/rentals", query_string = data)
@@ -384,7 +384,7 @@ def test_get_first_page_of_rentals_grouped_by_two(client, one_checked_out_video,
 
 def test_get_second_page_of_rentals_grouped_by_two(client, one_checked_out_video, second_checked_out_video, third_checked_out_video):
     # Arrange
-    data = {"n": 2, "p": 2}
+    data = {"per_page": 2, "page": 2}
 
     # Act
     response = client.get("/customers/1/rentals", query_string = data)
@@ -399,7 +399,7 @@ def test_get_second_page_of_rentals_grouped_by_two(client, one_checked_out_video
 
 def test_get_rentals_no_page(client, one_checked_out_video, second_checked_out_video, third_checked_out_video):
     # Arrange
-    data = {"n": 2}
+    data = {"per_page": 2}
 
     # Act
     response = client.get("/customers/1/rentals", query_string = data)
@@ -418,7 +418,7 @@ def test_get_rentals_no_page(client, one_checked_out_video, second_checked_out_v
 
 def test_get_rentals_sorted_and_paginated(client, one_checked_out_video, second_checked_out_video, third_checked_out_video):
     # Arrange
-    data = {"n": 2, "sort": "title", "p": 2}
+    data = {"per_page": 2, "sort": "title", "page": 2}
 
     # Act
     response = client.get("/customers/1/rentals", query_string = data)
@@ -452,7 +452,7 @@ def test_get_rentals_invalid_sort_param(client, one_checked_out_video, second_ch
 
 def test_get_rentals_invalid_n_param(client, one_checked_out_video, second_checked_out_video):
     # Arrange
-    data = {"n": "invalid"}
+    data = {"per_page": "invalid"}
 
     # Act
     response = client.get("/customers/1/rentals", query_string = data)
@@ -471,7 +471,7 @@ def test_get_rentals_invalid_n_param(client, one_checked_out_video, second_check
 
 def test_get_rentals_invalid_p_param(client, one_checked_out_video, second_checked_out_video):
     # Arrange
-    data = {"p": "invalid"}
+    data = {"page": "invalid"}
 
     # Act
     response = client.get("/customers/1/rentals", query_string = data)
@@ -568,7 +568,7 @@ def test_get_renters_sorted_by_postal_code(client, customer_one_video_three, cus
 
 def test_paginate_per_page_greater_than_num_renters(client, customer_one_video_three):
     # Arrange
-    data = {"n": 5, "p": 1}
+    data = {"per_page": 5, "page": 1}
 
     # Act
     response = client.get("/videos/1/rentals", query_string = data)
@@ -585,7 +585,7 @@ def test_paginate_per_page_greater_than_num_renters(client, customer_one_video_t
 
 def test_get_second_page_of_renters(client, customer_one_video_three, customer_two_video_three):
     # Arrange
-    data = {"n": 1, "p": 2}
+    data = {"per_page": 1, "page": 2}
 
     # Act
     response = client.get("/videos/1/rentals", query_string = data)
@@ -602,7 +602,7 @@ def test_get_second_page_of_renters(client, customer_one_video_three, customer_t
     
 def test_get_first_page_of_renters_grouped_by_two(client, customer_one_video_three, customer_two_video_three, customer_three_video_three):
     # Arrange
-    data = {"n": 2, "p": 1}
+    data = {"per_page": 2, "page": 1}
 
     # Act
     response = client.get("/videos/1/rentals", query_string = data)
@@ -623,7 +623,7 @@ def test_get_first_page_of_renters_grouped_by_two(client, customer_one_video_thr
 
 def test_get_second_page_of_renters_grouped_by_two(client, customer_one_video_three, customer_two_video_three, customer_three_video_three):
     # Arrange
-    data = {"n": 2, "p": 2}
+    data = {"per_page": 2, "page": 2}
 
     # Act
     response = client.get("/videos/1/rentals", query_string = data)
@@ -640,7 +640,7 @@ def test_get_second_page_of_renters_grouped_by_two(client, customer_one_video_th
 
 def test_get_customers_no_page(client, customer_one_video_three, customer_two_video_three, customer_three_video_three):
     # Arrange
-    data = {"n": 2}
+    data = {"per_page": 2}
 
     # Act
     response = client.get("/videos/1/rentals", query_string = data)
@@ -661,7 +661,7 @@ def test_get_customers_no_page(client, customer_one_video_three, customer_two_vi
 
 def test_get_renters_sorted_and_paginated(client, customer_one_video_three, customer_two_video_three, customer_three_video_three):
     # Arrange
-    data = {"n": 2, "sort": "name", "p": 1}
+    data = {"per_page": 2, "sort": "name", "page": 1}
 
     # Act
     response = client.get("/videos/1/rentals", query_string = data)
@@ -704,7 +704,7 @@ def test_get_renters_invalid_sort_param(client, customer_one_video_three, custom
 
 def test_get_renters_invalid_n_param(client, customer_one_video_three, customer_two_video_three):
     # Arrange
-    data = {"n": "invalid"}
+    data = {"per_page": "invalid"}
 
     # Act
     response = client.get("/videos/1/rentals", query_string = data)
@@ -725,7 +725,7 @@ def test_get_renters_invalid_n_param(client, customer_one_video_three, customer_
 
 def test_get_renters_invalid_p_param(client, customer_one_video_three, customer_two_video_three):
     # Arrange
-    data = {"p": "invalid"}
+    data = {"page": "invalid"}
 
     # Act
     response = client.get("/customers", query_string = data)
