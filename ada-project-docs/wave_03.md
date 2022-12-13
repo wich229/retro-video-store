@@ -6,8 +6,8 @@ The following 3 _optional_ query parameters:
 | Name          | Value   | Description
 |---------------|---------|------------
 | `sort`        | string  | Sort objects by this field, in ascending order
-| `per_page`    | integer | Number of responses to return per page
-| `page`        | integer | Page of responses to return
+| `count`       | integer | Number of responses to return per page
+| `page_num`    | integer | Page of responses to return
 
 should be accepted by the following three endpoints:
 - `GET /customers`
@@ -17,8 +17,8 @@ should be accepted by the following three endpoints:
 So, for an API endpoint like `GET /customers`, the following requests should be valid:
 - `GET /customers`: All customers, sorted by ID
 - `GET /customers?sort=name`: All customers, sorted by name
-- `GET /customers?per_page=10&page=2`: Customers 11-20, sorted by ID
-- `GET /customers?sort=name&per_page=10&page=2`: Customers 11-20, sorted by name
+- `GET /customers?count=10&page_num=2`: Customers 11-20, sorted by ID
+- `GET /customers?sort=name&count=10&page_num=2`: Customers 11-20, sorted by name
 
 Things to note:
 - Possible sort fields:
