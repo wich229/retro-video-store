@@ -71,6 +71,6 @@ Be sure to grab the URL of your deployed app. It will be submitted at the time o
   - Use Postman, the browser, and the debugger tools
   - Use the Heroku logs
   - Research error messages
-  - Rubber duck and ask for help 
+  - Rubber duck and ask for help in slack
 
 
