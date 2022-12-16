@@ -1,7 +1,7 @@
 # Wave 3: Enhancements & Deployment
 
 ## Query Parameters
-The following 3 _optional_ query parameters:
+The following 3 query parameters:
 
 | Name          | Value   | Description
 |---------------|---------|------------
@@ -21,11 +21,15 @@ So, for an API endpoint like `GET /customers`, the following requests should be 
 - `GET /customers?sort=name&count=10&page_num=2`: Customers 11-20, sorted by name
 
 Things to note:
+- All three query parameters are an _optional_ part of the request body
 - Possible sort fields:
   - Customers can be sorted by `name`, `registered_at` and `postal_code`
   - Videos can be sorted by `title` and `release_date`
 - If the client requests both sorting and pagination, pagination should be relative to the sorted order
 - Check out the [paginate method](https://flask-sqlalchemy.palletsprojects.com/en/2.x/api/#flask_sqlalchemy.BaseQuery.paginate)
+  - The paginate method reteurns a [Pagination object](https://flask-sqlalchemy.palletsprojects.com/en/2.x/api/#flask_sqlalchemy.Pagination)
+  - To access records from a Pagination object, consider using the `items` attribute
+  - See [this article from DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-query-tables-and-paginate-data-in-flask-sqlalchemy) for a more detailed look at paginating data using SQLAlchemy 
 
 
 #### Errors and Edge Cases to Check
@@ -36,24 +40,6 @@ Things to note:
 - The API should default to returning all customers in a single page if an invalid number of per page responses is specified
 - The API should default to returning the first page if no page is specified
 - The API should default to returning the first page if an invalid page is specified
-
-## Extra Endpoint: Inventory Management
-This endpoint should support all 3 query parameters. All fields are sortable.
-
-### `GET /customers/<id>/history`
-List the videos a customer has checked out _in the past_. Current rentals should not be included.                                                                                  
-
-URI parameters:
-- `id`: Customer ID
-
-Fields to return:
-- `title`
-- `checkout_date`
-- `due_date`
-
-#### Errors and Edge Cases to Check
-- The API should return back detailed errors and a status `404: Not Found` if the customer does not exist
-- The API should return an empty list if the customer has no rental history
 
 ## Deployment
 

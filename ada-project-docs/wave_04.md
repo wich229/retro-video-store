@@ -2,6 +2,32 @@
 
 These really are **optional** - if you've gotten here and you have time left, that means you're moving speedy fast!
 
+### More Inventory Management
+All these endpoints should support all 3 query parameters. All fields are sortable.
+
+#### `GET /rentals/overdue`
+List all customers with overdue videos
+
+Fields to return:
+- `video_id`
+- `title`
+- `customer_id`
+- `name`
+- `postal_code`
+- `checkout_date`
+- `due_date`
+
+### `GET /customers/<id>/history`
+List the videos a customer has checked out _in the past_. Current rentals should not be included.                                                                                  
+
+URI parameters:
+- `id`: Customer ID
+
+Fields to return:
+- `title`
+- `checkout_date`
+- `due_date`
+
 ## Enhancements
 
 ### More Query Parameters
@@ -25,22 +51,6 @@ So, for an API endpoint like `GET /videos`, the following requests should be val
 - `GET /videos?sort=name&count=10&page_num=2`: Customers 11-20, sorted by name
 
 Add your own Wave 04 tests to verify functionality.
-
-### More Inventory Management
-All these endpoints should support all 3 query parameters. All fields are sortable.
-
-#### `GET /rentals/overdue`
-List all customers with overdue videos
-
-Fields to return:
-- `video_id`
-- `title`
-- `customer_id`
-- `name`
-- `postal_code`
-- `checkout_date`
-- `due_date`
-
 
 ## CLI
 
