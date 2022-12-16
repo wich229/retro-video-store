@@ -3,7 +3,7 @@
 These really are **optional** - if you've gotten here and you have time left, that means you're moving speedy fast!
 
 ### More Inventory Management
-All these endpoints should support all 3 query parameters. All fields are sortable.
+All these endpoints should support all 3 query parameters from Wave 3. All fields are sortable.
 
 #### `GET /rentals/overdue`
 List all customers with overdue videos
