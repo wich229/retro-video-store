@@ -12,7 +12,6 @@ The following 3 query parameters:
 should be accepted by the following three endpoints:
 - `GET /customers`
 - `GET /customers/<id>/rentals`
-- `GET /videos/<id>/rentals`
 
 So, for an API endpoint like `GET /customers`, the following requests should be valid:
 - `GET /customers`: All customers, sorted by ID

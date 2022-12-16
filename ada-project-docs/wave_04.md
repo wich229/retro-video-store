@@ -17,7 +17,7 @@ Fields to return:
 - `checkout_date`
 - `due_date`
 
-### `GET /customers/<id>/history`
+#### `GET /customers/<id>/history`
 List the videos a customer has checked out _in the past_. Current rentals should not be included.                                                                                  
 
 URI parameters:
@@ -27,6 +27,20 @@ Fields to return:
 - `title`
 - `checkout_date`
 - `due_date`
+- 
+####  `GET /videos/<id>/history`
+List customers that have checked out a copy of the video _in the past_
+
+URI parameters:
+- `id`: Video identifier
+
+Fields to return:
+- `customer_id`
+- `name`
+- `postal_code`
+- `checkout_date`
+- `due_date`
+
 
 ## Enhancements
 
