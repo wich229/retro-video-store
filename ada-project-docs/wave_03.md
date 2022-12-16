@@ -51,12 +51,12 @@ Be sure to grab the URL of your deployed app. It will be submitted at the time o
 
 ### Tips
 - When unexpected issues come up, employ all of your debugging skills:
-  - Write down what step/command created teh issue
+  - Write down what step/command created the issue
   - Write down how you observe the issue
   - Attempt to recreate the issue locally
   - Use Postman, the browser, and the debugger tools
   - Use the Heroku logs
   - Research error messages
-  - Rubber duck and ask for help 
+  - Rubber duck and ask for help in slack
 
 
