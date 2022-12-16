@@ -202,11 +202,7 @@ def test_get_customers_no_page(client, one_customer, second_customer, third_cust
 
 def test_get_customers_sorted_and_paginated(client, one_customer, second_customer, third_customer):
     # Arrange
-<<<<<<< HEAD
-    data = {"per_page": 2, "sort": "name"}
-=======
     data = {"count": 2, "sort": "name"}
->>>>>>> 33d16bd (Update query params)
 
     # Act
     response = client.get("/customers", query_string = data)

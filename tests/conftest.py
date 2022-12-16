@@ -65,7 +65,7 @@ def third_video(app):
     db.session.commit()
 
 @pytest.fixture
-def three_copies_video(app):
+def five_copies_video(app):
     new_video = Video(
         title=VIDEO_TITLE, 
         release_date=VIDEO_RELEASE_DATE,
