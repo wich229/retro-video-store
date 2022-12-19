@@ -28,6 +28,8 @@ The full functionality is spelled out further in the "Project Directions" files 
 - Video rental check in, custom endpoint
 - Listing videos checked out to a customer, custom endpoint
 - Listing customers who have checked out a video, custom endpoint
+- Listing customer rental history, custom endpoint
+- Adding sorting and pagination with query parameters for listing customerss, customers who have checked out a video, and videos checked out to a customer
 
 ## How to Complete and Submit
 
@@ -42,4 +44,5 @@ At submission time, no matter where you are, submit the project via Learn.
 1. [Setup](ada-project-docs/setup.md)
 1. [Wave 1: CRUD for two models](ada-project-docs/wave_01.md)
 1. [Wave 2: Custom endpoints](ada-project-docs/wave_02.md)
-1. [Wave 3: Optional extensions](ada-project-docs/wave_03.md)
+1. [Wave 3: Enhancements & Deployment](ada-project-docs/wave_03.md)
+2. [Wave 4: (Optional) Further Enhancements](ada-project-docs/wave_04.md)
