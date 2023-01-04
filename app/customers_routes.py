@@ -13,9 +13,9 @@ def create_customer():
     new_customer = Customer(
         name = customer_data["name"],
         postal_code = customer_data["postal_code"],
-        phone_number = customer_data["phone_number"],
+        phone = customer_data["phone"],
         register_at = customer_data["register_at"],
-        videos_checked_out_count = customer_data["videos_checked_out_count"]
+        # videos_checked_out_count = customer_data["videos_checked_out_count"]
     )
 
     db.session.add(new_customer)
@@ -31,9 +31,9 @@ def get_customers_optional_query():
     sort_query = request.args.get("sort")
     if sort_query:
         if sort_query == "desc":
-            customer_query = customer_query.order_by(Customer.videos_checked_out_count.desc())
+            customer_query = customer_query.order_by(Customer.name.desc())
         else:
-            customer_query = customer_query.order_by(Customer.videos_checked_out_count.asc())
+            customer_query = customer_query.order_by(Customer.name.asc())
         
 
     customers = customer_query.all()
@@ -43,9 +43,9 @@ def get_customers_optional_query():
             "id": customer.id,
             "name": customer.name,
             "postal_code": customer.postal_code,
-            "phone_number": customer.phone_number,
-            "register_at": customer.register_at,
-            "videos_checked_out_count": customer.videos_checked_out_count
+            "phone": customer.phone,
+            # "register_at": customer.register_at
+            # "videos_checked_out_count": customer.videos_checked_out_count
         })
 
     return jsonify(customer_response)
@@ -59,9 +59,9 @@ def get_customer_by_id(customer_id):
         "id": customer_to_return.id,
         "name": customer_to_return.name,
         "postal_code": customer_to_return.postal_code,
-        "phone_number": customer_to_return.phone_number,
-        "register_at": customer_to_return.register_at,
-        "videos_checked_out_count": customer_to_return.videos_checked_out_count
+        "phone": customer_to_return.phone,
+        # "register_at": customer_to_return.register_at,
+        # "videos_checked_out_count": customer_to_return.videos_checked_out_count
     })
 
 # PUT /customers/<id>
@@ -72,9 +72,9 @@ def replace_customer_with_id(customer_id):
 
     customer_to_update.name = customer_data["name"],
     customer_to_update.postal_code = customer_data["postal_code"],
-    customer_to_update.phone_number = customer_data["phone_number"],
+    customer_to_update.phone = customer_data["phone"],
     customer_to_update.register_at = customer_data["register_at"],
-    customer_to_update.videos_checked_out_count = customer_data["videos_checked_out_count"]
+    # customer_to_update.videos_checked_out_count = customer_data["videos_checked_out_count"]
 
     db.session.commit()
 
