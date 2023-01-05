@@ -192,7 +192,7 @@ def test_update_video_invalid_data(client, one_video):
     })
 
     # Assert
-    assert response.status_code == 400
+    assert response.status_code == 400 
 
 
 # --------------------------------
@@ -260,6 +260,7 @@ def test_create_customer(client):
     })
 
     response_body = response.get_json()
+    print(response_body)
 
     # Assert
     assert response.status_code == 201
