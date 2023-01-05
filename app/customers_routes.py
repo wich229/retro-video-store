@@ -30,14 +30,15 @@ def create_customer():
     db.session.add(new_customer)
     db.session.commit()
 
-    return make_response({"id":new_customer.id}, 201)
+    return make_response(jsonify(new_customer.to_dict()), 201)
 
 
 # GET /customers X
 @customers_bp.route("", methods=["GET"])
 def get_customers_optional_query():
     customer_query = Customer.query
-    # queries??
+    
+    ###### refactor ######
     sort_query = request.args.get("sort")
     if sort_query == "asc":
         customer_query = customer_query.order_by(Customer.name.asc())
@@ -113,6 +114,8 @@ def delete_customer_by_id(customer_id):
     
 #     abort(make_response({"message": f"Customer {customer_id} was not found"}, 404))
 
+
+###### refactor ######
 # helper function to check model_id
 def validate_model(cls, model_id):
     try:

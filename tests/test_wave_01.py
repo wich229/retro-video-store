@@ -30,6 +30,7 @@ def test_get_videos_one_saved_video(client, one_video):
     # Act
     response = client.get("/videos")
     response_body = response.get_json()
+    print(response_body)
 
     # Assert
     assert response.status_code == 200
@@ -77,6 +78,7 @@ def test_create_video(client):
     })
 
     response_body = response.get_json()
+    print(response_body)
 
     # Assert
     assert response.status_code == 201
@@ -260,7 +262,6 @@ def test_create_customer(client):
     })
 
     response_body = response.get_json()
-    print(response_body)
 
     # Assert
     assert response.status_code == 201
