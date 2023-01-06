@@ -95,26 +95,6 @@ def delete_customer_by_id(customer_id):
 
     return make_response({"id":customer_to_delete.id}, 200)
 
-
-###########
-# changes #
-###########
-
-# Helper Function
-# def validate_id_and_return_customer(customer_id):
-#     try:
-#         customer_id_as_int = int(customer_id)
-#     except:
-#         msg = f"Customer {customer_id} is not an integer"
-#         abort(make_response({"message": msg}, 400))
-
-#     customer = Customer.query.get(customer_id_as_int)
-#     if customer:
-#         return customer
-    
-#     abort(make_response({"message": f"Customer {customer_id} was not found"}, 404))
-
-
 ###### refactor ######
 # helper function to check model_id
 def validate_model(cls, model_id):
