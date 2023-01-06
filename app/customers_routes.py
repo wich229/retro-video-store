@@ -1,9 +1,9 @@
 from app import db
 from app.models.customer import Customer
 from flask import Blueprint, jsonify, abort, make_response, request
-"""
-add 404 error checking if customer does not exist and edge cases 
-"""
+from app.routes_helper import validate_model
+
+
 customers_bp = Blueprint("customers_bp", __name__, url_prefix="/customers")
 
 # POST /customers 
@@ -94,18 +94,3 @@ def delete_customer_by_id(customer_id):
     db.session.commit()
 
     return make_response({"id":customer_to_delete.id}, 200)
-
-###### refactor ######
-# helper function to check model_id
-def validate_model(cls, model_id):
-    try:
-        model_id = int(model_id)
-    except:
-        abort(make_response({"message": f"{cls.__name__} {model_id} invalid"}, 400))
-    
-    model = cls.query.get(model_id)
-    
-    if model:
-        return model
-        
-    abort(make_response({"message": f"{cls.__name__} {model_id} was not found"}, 404))

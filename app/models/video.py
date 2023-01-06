@@ -5,14 +5,9 @@ class Video(db.Model):
     title = db.Column(db.String)
     release_date = db.Column(db.DateTime)
     total_inventory = db.Column(db.Integer)
+    customers = db.relationship("Customer", secondary="rental", back_populates="videos")
 
 
-    #   {
-    #     "id": 1,
-    #     "title": "Blacksmith Of The Banished",
-    #     "release_date": "1979-01-18",
-    #     "total_inventory": 10
-    #   }
     
     def to_dict(self):
         return {
@@ -24,4 +19,11 @@ class Video(db.Model):
     
     @classmethod
     def from_dict(cls, data):
+        pass
+    
+    
+    # available_inventory is a function:
+    # total will be video.total_inventory - vedio_id with check_out status amount
+    # + vedio_id with check_in status amount
+    def available_inventory(id):
         pass

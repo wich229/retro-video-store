@@ -7,15 +7,9 @@ class Customer(db.Model):
     phone = db.Column(db.String) 
     register_at = db.Column(db.DateTime)
     videos_checked_out_count = db.Column(db.Integer)
+    videos = db.relationship("Video", secondary="rental", back_populates="customers")
 
 
-    #   {
-    #     "id": 1,
-    #     "name": "Shelley Rocha",
-    #     "registered_at": "Wed, 29 Apr 2015 07:54:14 -0700",
-    #     "postal_code": "24309",
-    #     "phone": "(322) 510-8695"
-    #   }
     
     def to_dict(self):
         return {
