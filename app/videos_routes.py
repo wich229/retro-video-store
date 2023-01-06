@@ -1,6 +1,7 @@
 from app import db
 from app.models.video import Video
 from flask import Blueprint, jsonify, abort, make_response, request
+from app.routes_helper import validate_model
 
 videos_bp = Blueprint("videos_bp", __name__, url_prefix="/videos")
 
@@ -89,21 +90,3 @@ def delete_customer_by_id(video_id):
     db.session.commit()
 
     return make_response(jsonify(video_data.to_dict()), 200)
-
-
-
-
-###### refactor ######
-# helper function to check model_id
-def validate_model(cls, model_id):
-    try:
-        model_id = int(model_id)
-    except:
-        abort(make_response({"message": f"{cls.__name__} {model_id} invalid"}, 400))
-    
-    model = cls.query.get(model_id)
-    
-    if model:
-        return model
-        
-    abort(make_response({"message": f"{cls.__name__} {model_id} was not found"}, 404))

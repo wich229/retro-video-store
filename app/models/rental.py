@@ -1,4 +1,25 @@
 from app import db
 
 class Rental(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = "rental"
+    video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True, nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), primary_key=True, nullable=False)
+    due_date = db.Column(db.DateTime)
+    # status - track for check_in or check_out
+    status = db.Column(db.String) 
+    
+    
+    
+    def to_dict(self):
+        return {
+            "video_id": self.video_id,
+            "customer_id": self.customer_id,
+            "due_date": self.due_date,
+            "status": self.status
+        }
+        
+    
+    @classmethod
+    def from_dict(cls, data):
+        pass
+    
