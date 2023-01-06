@@ -1,7 +1,5 @@
 from flask import abort, make_response
 
-
-
 # helper function to check model_id
 def validate_model(cls, model_id):
     try:

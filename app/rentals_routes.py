@@ -1,7 +1,9 @@
 from app import db
-from app.models import Video, Rental, Customer
+from app.models.video import Video
+from app.models.customer import Customer
+from app.models.rental import Rental
 from flask import Blueprint, jsonify, abort, make_response, request
-from customers_routes import validate_model
+import datetime 
 
 rentals_bp = Blueprint("rentals_bp", __name__, url_prefix="/rentals")
 
@@ -11,50 +13,44 @@ def checkout_video():
     checkout_data = request.get_json()
     try:
         customer = Customer.query.get(checkout_data["customer_id"])
-    except:
+        video = Video.query.get(checkout_data["video_id"])
+    except KeyError as err:
+        abort(make_response({"message":f"Missing {err.args[0]}."}, 400))
+    
+    if not customer:
         abort(make_response({"message":f"Customer does not exist."}, 404))
 
-    try:
-        video = Video.query.get(checkout_data["video_id"])
-    except:
+    if not video:
         abort(make_response({"message":f"Video does not exist."}, 404))
 
-    if checkout_data["available_inventory"] == 0:
-        abort(make_response({"message":f"No available inventory."}, 400))
-        
-    new_rental = Rental(video_id = checkout_data["video_id"],
-                            customer_id = checkout_data["customer_id"],
-                            videos_checked_out_count = checkout_data["videos_checked_out_count"],
-                            available_inventory = checkout_data["available_inventory"]
-                            )
+    #find how many copies of the video being checked out are already rented
+    rentals = Rental.query.all()
+    rental_count = 0
+    for rental in rentals:
+        if rental.video_id == video.id:
+            rental_count += 1
+
+    available_inventory = video.total_inventory - rental_count
+    if available_inventory <= 0:
+        abort(make_response({"message":"Could not perform checkout"}, 400))
+
+    # not sure if we need to update video total_inventory
+    # video.total_inventory -= 1 
+
+    new_rental = Rental(video_id = video.id,
+                        customer_id = customer.id,
+                        due_date = datetime.date.today() - datetime.timedelta(days=7),
+                        status = "checked out" #not sure what status should be 
+                        )
+
+    check_out_response = {"customer_id": new_rental.customer_id,
+                            "video_id": new_rental.video_id,
+                            "due_date": new_rental.due_date,
+                            "videos_checked_out_count": rental_count + 1,
+                            "available_inventory": available_inventory
+                            } 
+    db.session.add(new_rental)
+    db.session.commit()
+
+    return make_response(jsonify(check_out_response), 200)
     
-
-
-
-
-
-    """
-    The API should return back detailed errors and a status 404: Not Found if the customer does not exist
-    The API should return back detailed errors and a status 404: Not Found if the video does not exist
-    The API should return back detailed errors and a status 400: Bad Request if the video does not have any available inventory before check out
-"""
-    
-    # create a rental for the specific video and customer.
-    # create a due date. The rental's due date is the seven days from the current date.
-    pass
-"""
-def test_checkout_video(client, one_video, one_customer):
-
-    response = client.post("/rentals/check-out", json={
-        "customer_id": 1,
-        "video_id": 1
-    })
-
-    response_body = response.get_json()
-
-    assert response.status_code == 200
-    assert response_body["video_id"] == 1
-    assert response_body["customer_id"] == 1
-    assert response_body["videos_checked_out_count"] == 1
-    assert response_body["available_inventory"] == 0
-"""

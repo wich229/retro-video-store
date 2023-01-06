@@ -5,7 +5,6 @@ from app.routes_helper import validate_model
 
 videos_bp = Blueprint("videos_bp", __name__, url_prefix="/videos")
 
-
 # GET /videos
 @videos_bp.route("", methods=["GET"])
 def get_all_videos():

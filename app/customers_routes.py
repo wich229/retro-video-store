@@ -3,7 +3,6 @@ from app.models.customer import Customer
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.routes_helper import validate_model
 
-
 customers_bp = Blueprint("customers_bp", __name__, url_prefix="/customers")
 
 # POST /customers 
