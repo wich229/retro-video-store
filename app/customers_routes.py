@@ -1,5 +1,6 @@
 from app import db
 from app.models.customer import Customer
+from app.models.rental import Rental
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.routes_helper import validate_model
 
@@ -93,3 +94,14 @@ def delete_customer_by_id(customer_id):
     db.session.commit()
 
     return make_response({"id":customer_to_delete.id}, 200)
+
+@customers_bp.route("/<customer_id>/rentals", methods=["GET"])
+def rentals_by_video(customer_id):
+    customer = validate_model(Customer, customer_id)
+    rentals = customer.videos
+    
+    customer_response = []
+    for rental in rentals:
+        customer_response.append(rental.to_dict())
+
+    return make_response(jsonify(customer_response), 200)

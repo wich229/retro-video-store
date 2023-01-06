@@ -1,5 +1,7 @@
 from app import db
 from app.models.video import Video
+from app.models.rental import Rental
+from app.models.customer import Customer
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.routes_helper import validate_model
 
@@ -89,3 +91,56 @@ def delete_customer_by_id(video_id):
     db.session.commit()
 
     return make_response(jsonify(video_data.to_dict()), 200)
+
+@videos_bp.route("/<video_id>/rentals", methods=["GET"])
+def rentals_by_video(video_id):
+    video = validate_model(Video, video_id)
+    rentals = Rental.query.all()
+    
+    rentals_response = []
+    for rental in rentals:
+        if rental.video_id == video.id:
+            customer = Customer.query.get(rental.customer_id)
+            rentals_response.append({"due_date": rental.due_date,
+                                "name": customer.name,
+                                "phone": customer.phone,
+                                "postal_code": customer.postal_code
+                                })
+
+
+    return make_response(jsonify(rentals_response), 200)
+"""
+GET /videos/<id>/rentals
+
+List the customers who currently have the video checked out
+Required Arguments
+Arg 	Type 	Details
+id 	integer 	The id of the video
+Response
+
+Typical success response is a list of customers with the due date:
+
+Status: 200
+
+[
+    {
+        "due_date": "Thu, 13 May 2021 21:36:38 GMT",
+        "name": "Edith Wong",
+        "phone": "(555) 555-5555",
+        "postal_code": "99999",
+    },
+    {
+        "due_date": "Thu, 13 May 2021 21:36:47 GMT",
+        "name": "Ricarda Mowery",
+        "phone": "(555) 555-5555",
+        "postal_code": "99999",
+    }
+]
+
+Errors and Edge Cases to Check
+
+    The API should return back detailed errors and a status 404: Not Found if the video does not exist
+    The API should return an empty list if the video is not checked out to any customers.
+
+
+"""
