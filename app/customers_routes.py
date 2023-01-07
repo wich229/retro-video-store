@@ -94,3 +94,20 @@ def delete_customer_by_id(customer_id):
     db.session.commit()
 
     return make_response({"id":customer_to_delete.id}, 200)
+
+
+####################
+#  nested roustes  #
+####################
+
+# GET /customers/<customer_id>/rentals
+@customers_bp.route("/<customer_id>/rentals", methods=["GET"])
+def rentals_by_video(customer_id):
+    customer = validate_model(Customer, customer_id)
+    rentals = customer.videos
+    
+    customer_response = []
+    for rental in rentals:
+        customer_response.append(rental.to_dict())
+
+    return make_response(jsonify(customer_response), 200)

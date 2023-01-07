@@ -1,5 +1,7 @@
 from app import db
 from app.models.video import Video
+from app.models.customer import Customer
+from app.models.rental import Rental
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.routes_helper import validate_model
 
@@ -90,3 +92,28 @@ def delete_customer_by_id(video_id):
     db.session.commit()
 
     return make_response(jsonify(video_data.to_dict()), 200)
+
+
+####################
+#  nested roustes  #
+####################
+
+# GET /videos/<video_id>/rentals
+@videos_bp.route("/<video_id>/rentals", methods=["GET"])
+def rentals_by_video(video_id):
+    video = validate_model(Video, video_id)
+    rentals = Rental.query.all()
+    
+    rentals_response = []
+    for rental in rentals:
+        if rental.video_id == video.id:
+            customer = Customer.query.get(rental.customer_id)
+            rentals_response.append({
+                                "due_date": rental.due_date,
+                                "name": customer.name,
+                                "phone": customer.phone,
+                                "postal_code": customer.postal_code
+                                })
+
+
+    return make_response(jsonify(rentals_response), 200)

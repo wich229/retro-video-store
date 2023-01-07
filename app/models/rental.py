@@ -1,4 +1,5 @@
 from app import db
+import datetime
 
 class Rental(db.Model):
     __tablename__ = "rental"
@@ -11,15 +12,22 @@ class Rental(db.Model):
     
     
     def to_dict(self):
-        return {
+        rental_dict =  {
             "video_id": self.video_id,
             "customer_id": self.customer_id,
             "due_date": self.due_date,
             "status": self.status
         }
         
+        return rental_dict
+        
+        
     
     @classmethod
-    def from_dict(cls, data):
-        pass
-    
+    def from_dict(cls, rental_data):
+        new_rental = Rental(
+                        video_id = rental_data["video_id"],
+                        customer_id = rental_data["customer_id"]
+                    )
+        
+        return new_rental

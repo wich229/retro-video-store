@@ -5,6 +5,7 @@ class Video(db.Model):
     title = db.Column(db.String)
     release_date = db.Column(db.DateTime)
     total_inventory = db.Column(db.Integer)
+    available_inventory = db.Column(db.Integer)
     customers = db.relationship("Customer", secondary="rental", back_populates="videos")
 
 
@@ -14,7 +15,8 @@ class Video(db.Model):
             "id": self.id,
             "title": self.title,
             "release_date": self.release_date,
-            "total_inventory": self.total_inventory
+            "total_inventory": self.total_inventory,
+            "available_inventory": self.available_inventory
         }
     
     @classmethod
@@ -25,5 +27,5 @@ class Video(db.Model):
     # available_inventory is a function:
     # total will be video.total_inventory - vedio_id with check_out status amount
     # + vedio_id with check_in status amount
-    def available_inventory(id):
+    def upadte_available_inventory(id):
         pass
