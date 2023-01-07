@@ -15,13 +15,14 @@ def validate_model(cls, model_id):
         
     abort(make_response({"message": f"{cls.__name__} {model_id} was not found"}, 404))
 
-
+"""# returns tuple containing status of rental and rental count
 def get_rental_count(customer_id, video_id):
     rentals = Rental.query.all()
     rental_count = 0
     rental_found = False
     for rental in rentals:
-        if rental.customer_id == customer_id and rental.video_id == video_id:
+        if rental.customer_id == customer_id:
+            if rental.video_id == video_id:
                 rental_found = True
-        rental_count += 1
-    return (rental_count, rental_found)
+                rental_count += 1
+    return (rental_count, rental_found)"""

@@ -77,8 +77,6 @@ def replace_customer_with_id(customer_id):
     customer.name = customer_data["name"]
     customer.postal_code = customer_data["postal_code"]
     customer.phone = customer_data["phone"]
-    # customer_to_update.register_at = customer_data["register_at"]
-    # customer_to_update.videos_checked_out_count = customer_data["videos_checked_out_count"]
 
     db.session.commit()
 
