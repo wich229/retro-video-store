@@ -23,8 +23,7 @@ def create_customer():
         name = customer_data["name"],
         postal_code = customer_data["postal_code"],
         phone = customer_data["phone"],
-        register_at = datetime.date.today(),
-        videos_checked_out_count = 0
+        register_at = datetime.date.today()
     )
 
     db.session.add(new_customer)

@@ -38,7 +38,6 @@ def checkout_video():
     if available_inventory <= 0:
         abort(make_response({"message":"Could not perform checkout"}, 400))
 
-    video.total_inventory -= 1 
     customer.videos_checked_out_count += 1
 
     new_rental = Rental(video_id = video.id,
@@ -84,20 +83,23 @@ def checkin_video():
                 rental_found = True
             rental_count += 1
 
+    available_inventory = video.total_inventory - rental_count
+
     if rental_found == False:
         msg = f"No outstanding rentals for customer {customer.id} and video {video.id}"
         abort(make_response({"message":msg}, 400))
 
     check_in_data["status"] = "checked_in"
     
-    video.total_inventory += 1 # ??????
+    customer.videos_checked_out_count -= 1
 
     check_in_response = {
     "customer_id": customer.id,
     "video_id": video.id,
     "videos_checked_out_count": rental_count - 1,
-    "available_inventory": video.total_inventory
+    "available_inventory": available_inventory + 1
     }
+    
     Rental.query.filter_by(customer_id=customer.id, video_id = video.id).delete()
 
     db.session.commit()
