@@ -38,7 +38,6 @@ def checkout_video():
     if available_inventory <= 0:
         abort(make_response({"message":"Could not perform checkout"}, 400))
 
-    # not sure if we need to update video total_inventory
     video.total_inventory -= 1 
     customer.videos_checked_out_count += 1
 
@@ -59,7 +58,7 @@ def checkout_video():
 
     return make_response(jsonify(check_out_response), 200)
 
-
+# /POST
 @rentals_bp.route("/check-in", methods=["POST"])
 def checkin_video():
     check_in_data = request.get_json()
@@ -105,3 +104,4 @@ def checkin_video():
     return make_response(jsonify(check_in_response), 200)
 
 
+# GET /customers/<id>/rentals
