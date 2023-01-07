@@ -54,6 +54,7 @@ def create_video():
         release_date = video_data["release_date"],
         total_inventory = video_data["total_inventory"]
     )
+    
 
     db.session.add(new_video)
     db.session.commit()
@@ -86,12 +87,14 @@ def update_video_by_id(video_id):
 # DELETE /videos/<id>
 @videos_bp.route("/<video_id>", methods=["DELETE"])
 def delete_customer_by_id(video_id):
-    video_data = validate_model(Video,video_id)
-    db.session.delete(video_data)
+    video_to_delete = validate_model(Video,video_id)
+    db.session.delete(video_to_delete)
     db.session.commit()
 
-    return make_response(jsonify(video_data.to_dict()), 200)
+    msg = f"Customer {video_to_delete.id} successfully deleted"
+    return make_response(jsonify({"id":video_to_delete.id, "message":msg}), 200)
 
+# GET /id/rentals
 @videos_bp.route("/<video_id>/rentals", methods=["GET"])
 def rentals_by_video(video_id):
     video = validate_model(Video, video_id)
@@ -109,38 +112,3 @@ def rentals_by_video(video_id):
 
 
     return make_response(jsonify(rentals_response), 200)
-"""
-GET /videos/<id>/rentals
-
-List the customers who currently have the video checked out
-Required Arguments
-Arg 	Type 	Details
-id 	integer 	The id of the video
-Response
-
-Typical success response is a list of customers with the due date:
-
-Status: 200
-
-[
-    {
-        "due_date": "Thu, 13 May 2021 21:36:38 GMT",
-        "name": "Edith Wong",
-        "phone": "(555) 555-5555",
-        "postal_code": "99999",
-    },
-    {
-        "due_date": "Thu, 13 May 2021 21:36:47 GMT",
-        "name": "Ricarda Mowery",
-        "phone": "(555) 555-5555",
-        "postal_code": "99999",
-    }
-]
-
-Errors and Edge Cases to Check
-
-    The API should return back detailed errors and a status 404: Not Found if the video does not exist
-    The API should return an empty list if the video is not checked out to any customers.
-
-
-"""

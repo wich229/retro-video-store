@@ -16,9 +16,9 @@ class Customer(db.Model):
             "id": self.id,
             "name": self.name,
             "postal_code": self.postal_code,
-            "phone": self.phone
-            # "register_at": customer.register_at
-            # "videos_checked_out_count": customer.videos_checked_out_count
+            "phone": self.phone,
+            "register_at": self.register_at,
+            "videos_checked_out_count": self.videos_checked_out_count
         }
     
     @classmethod

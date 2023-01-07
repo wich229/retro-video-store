@@ -23,11 +23,14 @@ def checkout_video():
 
     if not video:
         abort(make_response({"message":f"Video does not exist."}, 404))
-
-    #find how many copies of the video being checked out are already rented
+    
     rentals = Rental.query.all()
+    
     rental_count = 0
     for rental in rentals:
+        if rental.customer_id == customer.id and rental.video_id == video.id:
+            abort(make_response({"message":f"Customer {customer.id} is already renting video {video.id}."}, 400))
+
         if rental.video_id == video.id:
             rental_count += 1
 
@@ -37,11 +40,12 @@ def checkout_video():
 
     # not sure if we need to update video total_inventory
     video.total_inventory -= 1 
+    customer.videos_checked_out_count += 1
 
     new_rental = Rental(video_id = video.id,
                         customer_id = customer.id,
-                        due_date = datetime.date.today() - datetime.timedelta(days=7),
-                        status = "checked out" #not sure what status should be 
+                        due_date = datetime.date.today() + datetime.timedelta(days=7),
+                        status = "checked out" 
                         )
 
     check_out_response = {"customer_id": new_rental.customer_id,
@@ -86,12 +90,14 @@ def checkin_video():
         abort(make_response({"message":msg}, 400))
 
     check_in_data["status"] = "checked_in"
+    
+    video.total_inventory += 1 # ??????
 
     check_in_response = {
     "customer_id": customer.id,
     "video_id": video.id,
     "videos_checked_out_count": rental_count - 1,
-    "available_inventory": video.total_inventory + 1
+    "available_inventory": video.total_inventory
     }
     Rental.query.filter_by(customer_id=customer.id, video_id = video.id).delete()
 
