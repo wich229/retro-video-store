@@ -28,7 +28,7 @@ def get_all_videos():
     return jsonify(videos_response)
 
 
-# GET /vidoes/<id>
+# GET /videos/<id>
 @videos_bp.route("/<video_id>", methods=["GET"])
 def get_video_by_id(video_id):
     video_data = validate_model(Video,video_id)

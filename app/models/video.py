@@ -1,5 +1,4 @@
 from app import db
-from datetime import datetime, date
 
 class Video(db.Model):
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)

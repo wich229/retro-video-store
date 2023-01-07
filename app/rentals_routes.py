@@ -103,5 +103,3 @@ def checkin_video():
     db.session.commit()
     return make_response(jsonify(check_in_response), 200)
 
-
-# GET /customers/<id>/rentals

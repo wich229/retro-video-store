@@ -6,7 +6,6 @@ class Rental(db.Model):
     video_id = db.Column(db.Integer, db.ForeignKey('video.id'), primary_key=True, nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'), primary_key=True, nullable=False)
     due_date = db.Column(db.DateTime)
-    # status - track for check_in or check_out
     status = db.Column(db.String) 
     
     
