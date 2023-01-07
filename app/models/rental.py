@@ -24,3 +24,4 @@ class Rental(db.Model):
         pass
     
 
+    

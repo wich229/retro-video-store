@@ -1,4 +1,5 @@
 from flask import abort, make_response
+from app.models.rental import Rental
 
 # helper function to check model_id
 def validate_model(cls, model_id):
@@ -13,3 +14,14 @@ def validate_model(cls, model_id):
         return model
         
     abort(make_response({"message": f"{cls.__name__} {model_id} was not found"}, 404))
+
+
+def get_rental_count(customer_id, video_id):
+    rentals = Rental.query.all()
+    rental_count = 0
+    rental_found = False
+    for rental in rentals:
+        if rental.customer_id == customer_id and rental.video_id == video_id:
+                rental_found = True
+        rental_count += 1
+    return (rental_count, rental_found)
