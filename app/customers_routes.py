@@ -36,15 +36,34 @@ def create_customer():
 @customers_bp.route("", methods=["GET"])
 def get_customers_optional_query():
     customer_query = Customer.query
-    
-    ###### refactor ######
+
     sort_query = request.args.get("sort")
-    if sort_query == "asc":
+
+    if sort_query == "name":
         customer_query = customer_query.order_by(Customer.name.asc())
-    if sort_query == "desc":
-        customer_query = customer_query.order_by(Customer.name.desc())
-    
-    customers = customer_query.all()
+    elif sort_query == "postal_code":
+        customer_query = customer_query.order_by(Customer.postal_code.asc())
+    elif sort_query == "register_at":
+        customer_query = customer_query.order_by(Customer.register_at.asc())
+
+    try:
+        page_num_query = int(request.args.get("page_num"))
+    except:
+        page_num_query = None
+
+    try:
+        count_query = int(request.args.get("count"))
+    except:
+        count_query = None
+
+    if page_num_query and count_query:
+        customers= customer_query.paginate(page = page_num_query, per_page = count_query).items
+    elif page_num_query:
+        customers = customer_query.paginate(page = page_num_query).items
+    elif count_query:
+        customers = customer_query.paginate(per_page = count_query).items
+    else:
+        customers = customer_query.all()
     
     customer_response = []
     for customer in customers:

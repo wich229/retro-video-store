@@ -33,7 +33,6 @@ def checkout_video():
                 
                 
     # get rental count and determine if customer has already checked out the video
-    # rental_count, rental_found = get_rental_count(customer.id, video.id)
 
     available_inventory = video.total_inventory - rental_count
     # error handling: if there are no videos left to be rented

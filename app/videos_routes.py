@@ -9,16 +9,22 @@ videos_bp = Blueprint("videos_bp", __name__, url_prefix="/videos")
 
 # GET /videos
 @videos_bp.route("", methods=["GET"])
-def get_all_videos():
+def get_videos_optional_query():
     videos_query = Video.query
     
-    ###### refactor ######
-    sort_query = request.args.get("sort")
-    if sort_query == "asc":
-        videos_query = videos_query.order_by(Video.name.asc())
-    if sort_query == "desc":
-        videos_query = videos_query.order_by(Video.name.desc())
-    
+    title_query = request.args.get("title")
+    if title_query == "title":
+        videos_query = videos_query.order_by(Video.title.asc())
+
+    release_date_query = request.args.get("release_date")
+    if release_date_query == "release_date":
+        videos_query = videos_query.order_by(Video.release_date.asc())
+
+    """ sort_query = request.args.get("sort")
+    if release_date_query == "release_date":
+        videos_query = videos_query.order_by(Video.release_date.asc())
+    """
+
     videos = videos_query.all()
     
     videos_response = []
@@ -60,6 +66,7 @@ def create_video():
     db.session.commit()
 
     return make_response(jsonify(new_video.to_dict()), 201)
+
 
 
 # PUT /videos/<id>
