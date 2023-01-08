@@ -78,7 +78,6 @@ def test_create_video(client):
     })
 
     response_body = response.get_json()
-    print(response_body)
 
     # Assert
     assert response.status_code == 201
