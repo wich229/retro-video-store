@@ -15,12 +15,28 @@ def get_all_videos():
     
     ###### refactor ######
     sort_query = request.args.get("sort")
-    if sort_query == "asc":
-        videos_query = videos_query.order_by(Video.name.asc())
-    if sort_query == "desc":
-        videos_query = videos_query.order_by(Video.name.desc())
+    # check sort
+    if sort_query == "title":
+        videos_query = videos_query.order_by(Video.title.asc())
+    elif sort_query == "release_date":
+        videos_query = videos_query.order_by(Video.release_date.asc())
+    else:
+        videos_query = videos_query.order_by(Video.id.asc())
     
-    videos = videos_query.all()
+    
+    count_query = request.args.get("count", type=int)
+    page_num_query = request.args.get("page_num", type=int)
+
+    # check count
+    if count_query and not page_num_query:
+        page = videos_query.paginate(page=1, per_page=count_query)
+        videos = page.items
+    elif count_query and page_num_query:
+        page = videos_query.paginate(page=page_num_query, per_page=count_query)
+        videos = page.items
+    else:
+        videos = videos_query.all()
+
     
     videos_response = []
     for video in videos:

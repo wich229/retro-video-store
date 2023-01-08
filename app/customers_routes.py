@@ -1,10 +1,7 @@
 from app import db
 from app.models.customer import Customer
-from app.models.rental import Rental
-from app.models.video import Video
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.routes_helper import validate_model
-import datetime
 from flask_sqlalchemy import Pagination
 
 
