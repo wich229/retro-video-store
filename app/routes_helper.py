@@ -15,6 +15,7 @@ def validate_model(cls, model_id):
         
     abort(make_response({"message": f"{cls.__name__} {model_id} was not found"}, 404))
 
+
 """# returns tuple containing status of rental and rental count
 def get_rental_count(customer_id, video_id):
     rentals = Rental.query.all()

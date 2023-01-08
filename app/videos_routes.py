@@ -4,6 +4,7 @@ from app.models.rental import Rental
 from app.models.customer import Customer
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.routes_helper import validate_model
+from flask_sqlalchemy import Pagination
 
 videos_bp = Blueprint("videos_bp", __name__, url_prefix="/videos")
 
@@ -84,6 +85,7 @@ def update_video_by_id(video_id):
 
     return make_response(video_data, 200)
 
+
 # DELETE /videos/<id>
 @videos_bp.route("/<video_id>", methods=["DELETE"])
 def delete_customer_by_id(video_id):
@@ -94,21 +96,54 @@ def delete_customer_by_id(video_id):
     msg = f"Customer {video_to_delete.id} successfully deleted"
     return make_response(jsonify({"id":video_to_delete.id, "message":msg}), 200)
 
+
 # GET /id/rentals
 @videos_bp.route("/<video_id>/rentals", methods=["GET"])
 def rentals_by_video(video_id):
     video = validate_model(Video, video_id)
+    
     rentals = Rental.query.all()
     
-    rentals_response = []
+    rental_customers_response = []
     for rental in rentals:
         if rental.video_id == video.id:
             customer = Customer.query.get(rental.customer_id)
-            rentals_response.append({"due_date": rental.due_date,
-                                "name": customer.name,
-                                "phone": customer.phone,
-                                "postal_code": customer.postal_code
-                                })
+            rental_customers_response.append({
+                                        "id": rental.customer_id,
+                                        "due_date": rental.due_date,
+                                        "name": customer.name,
+                                        "phone": customer.phone,
+                                        "postal_code": customer.postal_code
+    
+                                    })
+    ######## refactor ######
+    sort_query = request.args.get("sort")
+    
+    # check sort
+    if sort_query == "name":
+        rental_customers_response = sorted(rental_customers_response, key=lambda c: c['name'])
+    elif sort_query == "registered_at":
+        rental_customers_response = sorted(rental_customers_response, key=lambda c: c['register_at'])
+    elif sort_query == "postal_code":
+        rental_customers_response = sorted(rental_customers_response, key=lambda c: c['postal_code'])
+    else:
+        rental_customers_response = sorted(rental_customers_response, key=lambda c: c['id'])
+    
+    count_query = request.args.get("count", type=int)
+    page_num_query = request.args.get("page_num",1,type=int)    
+    # # check count
+    if count_query and not page_num_query:
+        # get the start and end index based on page number
+        start_index = (page_num_query - 1) * count_query
+        end_index = start_index + count_query
+        items = rental_customers_response[start_index : end_index] 
+        page = Pagination(None, page_num_query, count_query, len(items), items)
+        rental_customers_response = page.items
+    elif count_query and page_num_query:
+        start_index = (page_num_query - 1) * count_query
+        end_index = start_index + count_query
+        items = rental_customers_response[start_index : end_index]
+        page = Pagination(None, page_num_query, count_query, len(items), items)
+        rental_customers_response = page.items
 
-
-    return make_response(jsonify(rentals_response), 200)
+    return make_response(jsonify(rental_customers_response), 200)

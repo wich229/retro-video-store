@@ -1,11 +1,12 @@
 from app import db
+import datetime
 
 class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     name = db.Column(db.String)
     postal_code = db.Column(db.String) 
     phone = db.Column(db.String) 
-    register_at = db.Column(db.DateTime)
+    register_at = db.Column(db.DateTime, default=datetime.date.today())
     videos_checked_out_count = db.Column(db.Integer, default=0)
     videos = db.relationship("Video", secondary="rental", back_populates="customers")
 

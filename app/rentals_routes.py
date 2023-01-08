@@ -4,7 +4,7 @@ from app.models.customer import Customer
 from app.models.rental import Rental
 from app.routes_helper import validate_model
 from flask import Blueprint, jsonify, abort, make_response, request
-import datetime 
+import datetime
 
 rentals_bp = Blueprint("rentals_bp", __name__, url_prefix="/rentals")
 
@@ -46,6 +46,7 @@ def checkout_video():
     # updates the amount of videos the customer has checked out in the customer database
     customer.videos_checked_out_count += 1
 
+    
     new_rental = Rental(video_id = video.id,
                         customer_id = customer.id,
                         due_date = datetime.date.today() + datetime.timedelta(days=7)
@@ -61,6 +62,7 @@ def checkout_video():
     db.session.commit()
 
     return make_response(jsonify(check_out_response), 200)
+
 
 # /POST
 @rentals_bp.route("/check-in", methods=["POST"])

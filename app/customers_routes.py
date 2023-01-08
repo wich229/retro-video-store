@@ -1,8 +1,12 @@
 from app import db
 from app.models.customer import Customer
+from app.models.rental import Rental
+from app.models.video import Video
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.routes_helper import validate_model
 import datetime
+from flask_sqlalchemy import Pagination
+
 
 customers_bp = Blueprint("customers_bp", __name__, url_prefix="/customers")
 
@@ -22,8 +26,8 @@ def create_customer():
     new_customer = Customer(
         name = customer_data["name"],
         postal_code = customer_data["postal_code"],
-        phone = customer_data["phone"],
-        register_at = datetime.date.today()
+        phone = customer_data["phone"]
+        # register_at = datetime.date.today()
     )
 
     db.session.add(new_customer)
@@ -32,19 +36,37 @@ def create_customer():
     return make_response(jsonify(new_customer.to_dict()), 201)
 
 
-# GET /customers X
+# GET /customers
 @customers_bp.route("", methods=["GET"])
 def get_customers_optional_query():
     customer_query = Customer.query
     
     ###### refactor ######
     sort_query = request.args.get("sort")
-    if sort_query == "asc":
+    # check sort
+    if sort_query == "name":
         customer_query = customer_query.order_by(Customer.name.asc())
-    if sort_query == "desc":
-        customer_query = customer_query.order_by(Customer.name.desc())
+    elif sort_query == "registered_at":
+        customer_query = customer_query.order_by(Customer.register_at.asc())
+    elif sort_query == "postal_code":
+        customer_query = customer_query.order_by(Customer.postal_code.asc())
+    else:
+        customer_query = customer_query.order_by(Customer.id.asc())
     
-    customers = customer_query.all()
+    
+    count_query = request.args.get("count", type=int)
+    page_num_query = request.args.get("page_num", type=int)
+
+    # check count
+    if count_query and not page_num_query:
+        page = customer_query.paginate(page=1, per_page=count_query)
+        customers = page.items
+    elif count_query and page_num_query:
+        page = customer_query.paginate(page=page_num_query, per_page=count_query)
+        customers = page.items
+    else:
+        customers = customer_query.all()
+    
     
     customer_response = []
     for customer in customers:
@@ -59,6 +81,7 @@ def get_customer_by_id(customer_id):
     customer_to_return = validate_model(Customer,customer_id)
 
     return customer_to_return.to_dict()
+
 
 # PUT /customers/<id>
 @customers_bp.route("/<customer_id>", methods=["PUT"])
@@ -92,14 +115,43 @@ def delete_customer_by_id(customer_id):
     msg = f"Customer {customer_to_delete.id} successfully deleted"
     return make_response(jsonify({"id":customer_to_delete.id, "message":msg}), 200)
 
+
 # GET /<customer_id>/rentals
 @customers_bp.route("/<customer_id>/rentals", methods=["GET"])
 def rentals_by_video(customer_id):
     customer = validate_model(Customer, customer_id)
     rentals = customer.videos
     
-    customer_response = []
+    customer_rental_response = []
     for rental in rentals:
-        customer_response.append(rental.to_dict())
+        customer_rental_response.append(rental.to_dict())
+        
+    ######## refactor ######
+    sort_query = request.args.get("sort")
+    # check sort
+    if sort_query == "title":
+        customer_rental_response = sorted(customer_rental_response, key=lambda v: v['title'])
+    elif sort_query == "release_date":
+        customer_rental_response = sorted(customer_rental_response, key=lambda v: v['release_date'])
+    else:
+        customer_rental_response = sorted(customer_rental_response, key=lambda v: v['id'])
+        
+    count_query = request.args.get("count", type=int)
+    page_num_query = request.args.get("page_num",1,type=int)
+    # # check count
+    if count_query and not page_num_query:
+        # get the start and end index based on page number
+        start_index = (page_num_query - 1) * count_query
+        end_index = start_index + count_query
+        items = customer_rental_response[start_index : end_index] 
+        page = Pagination(None, page_num_query, count_query, len(items), items)
+        customer_rental_response = page.items
+    elif count_query and page_num_query:
+        start_index = (page_num_query - 1) * count_query
+        end_index = start_index + count_query
+        items = customer_rental_response[start_index : end_index]
+        page = Pagination(None, page_num_query, count_query, len(items), items)
+        customer_rental_response = page.items
 
-    return make_response(jsonify(customer_response), 200)
+
+    return make_response(jsonify(customer_rental_response), 200)
