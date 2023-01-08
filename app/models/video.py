@@ -13,7 +13,7 @@ class Video(db.Model):
         return {
             "id": self.id,
             "title": self.title,
-            "release_date": self.release_date,
+            "release_date": self.release_date.strftime("%Y-%m-%d"),
             "total_inventory": self.total_inventory
         }
     

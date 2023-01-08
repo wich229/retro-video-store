@@ -24,7 +24,6 @@ def create_customer():
         name = customer_data["name"],
         postal_code = customer_data["postal_code"],
         phone = customer_data["phone"]
-        # register_at = datetime.date.today()
     )
 
     db.session.add(new_customer)
