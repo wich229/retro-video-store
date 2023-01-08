@@ -126,11 +126,11 @@ def rentals_by_video(video_id):
             customer = Customer.query.get(rental.customer_id)
             rental_customers_response.append({
                                         "id": rental.customer_id,
-                                        "due_date": rental.due_date,
+                                        "due_date": rental.due_date.strftime("%Y-%m-%d"),
                                         "name": customer.name,
                                         "phone": customer.phone,
-                                        "postal_code": customer.postal_code
-    
+                                        "postal_code": customer.postal_code,
+                                        "register_at": customer.register_at.strftime("%Y-%m-%d")
                                     })
     ######## refactor ######
     sort_query = request.args.get("sort")
