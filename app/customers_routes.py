@@ -1,5 +1,7 @@
 from app import db
 from app.models.customer import Customer
+from app.models.rental import Rental
+from app.models.video import Video
 from flask import Blueprint, jsonify, abort, make_response, request
 from app.routes_helper import validate_model
 import datetime
@@ -37,6 +39,7 @@ def create_customer():
 def get_customers_optional_query():
     customer_query = Customer.query
 
+    # sort queries for name, postal code, and register at
     sort_query = request.args.get("sort")
 
     if sort_query == "name":
@@ -46,12 +49,13 @@ def get_customers_optional_query():
     elif sort_query == "register_at":
         customer_query = customer_query.order_by(Customer.register_at.asc())
 
+    #exception handling: page_num and count queries are invalid
     try:
         page_num_query = int(request.args.get("page_num"))
     except:
         page_num_query = None
 
-    try:
+    try :
         count_query = int(request.args.get("count"))
     except:
         count_query = None
@@ -76,7 +80,7 @@ def get_customers_optional_query():
 @customers_bp.route("/<customer_id>", methods=["GET"])
 def get_customer_by_id(customer_id):
     customer_to_return = validate_model(Customer,customer_id)
-
+    
     return customer_to_return.to_dict()
 
 # PUT /customers/<id>
@@ -114,11 +118,53 @@ def delete_customer_by_id(customer_id):
 # GET /<customer_id>/rentals
 @customers_bp.route("/<customer_id>/rentals", methods=["GET"])
 def rentals_by_video(customer_id):
-    customer = validate_model(Customer, customer_id)
-    rentals = customer.videos
-    
-    customer_response = []
-    for rental in rentals:
-        customer_response.append(rental.to_dict())
+    customer = validate_model(Customer, customer_id) 
+    video_query = Video.query
 
-    return make_response(jsonify(customer_response), 200)
+    # sort queries for title and release date
+    sort_query = request.args.get("sort")
+
+    if sort_query == "title":
+        video_query = video_query.order_by(Video.title.asc())
+    elif sort_query == "release_date":
+        video_query = video_query.order_by(Video.release_date.asc())
+
+    #exception handling: page_num and count queries are invalid
+    try:
+        page_num_query = int(request.args.get("page_num"))
+    except:
+        page_num_query = None
+
+    try :
+        count_query = int(request.args.get("count"))
+    except:
+        count_query = None
+
+    if page_num_query and count_query:
+        videos = video_query.paginate(page = page_num_query, per_page = count_query).items
+    elif page_num_query:
+        videos = video_query.paginate(page = page_num_query).items
+    elif count_query:
+        videos = video_query.paginate(per_page = count_query).items
+    else:
+        videos = video_query.all()
+
+    rental_response = []
+    for video in videos:
+        if video in customer.videos:
+            rental_response.append(video.to_dict())
+
+    return make_response(jsonify(rental_response), 200)
+
+
+@customers_bp.route("/<customer_id>/history", methods=["GET"])
+def get_customer_history(customer_id):
+    customer = validate_model(Customer, customer_id)
+
+    rental_response = []
+    for video in customer.videos:
+        rental_to_get = Rental.query.get({"video_id": video.id, "customer_id": customer.id})
+        if rental_to_get.status == "checked in":
+            rental_response.append(video.to_dict())
+
+    return make_response(jsonify(rental_response), 200)

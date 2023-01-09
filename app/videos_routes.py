@@ -20,11 +20,6 @@ def get_videos_optional_query():
     if release_date_query == "release_date":
         videos_query = videos_query.order_by(Video.release_date.asc())
 
-    """ sort_query = request.args.get("sort")
-    if release_date_query == "release_date":
-        videos_query = videos_query.order_by(Video.release_date.asc())
-    """
-
     videos = videos_query.all()
     
     videos_response = []
@@ -105,9 +100,49 @@ def delete_customer_by_id(video_id):
 @videos_bp.route("/<video_id>/rentals", methods=["GET"])
 def rentals_by_video(video_id):
     video = validate_model(Video, video_id)
-    rentals = Rental.query.all()
+    # rentals = Rental.query.all()
+    rentals = Rental.query.filter(Rental.video_id == video.id).all()
+    customer_query = Customer.query
+
+    # sort queries for title and release date
+    sort_query = request.args.get("sort")
+
+    if sort_query == "name":
+        customer_query = customer_query.order_by(Customer.name.asc())
+    elif sort_query == "postal_code":
+        customer_query = customer_query.order_by(Customer.postal_code.asc())
+
+    #exception handling: page_num and count queries are invalid
+    try:
+        page_num_query = int(request.args.get("page_num"))
+    except:
+        page_num_query = None
+
+    try :
+        count_query = int(request.args.get("count"))
+    except:
+        count_query = None
+
+    if page_num_query and count_query:
+        customers = customer_query.paginate(page = page_num_query, per_page = count_query).items
+    elif page_num_query:
+        customers = customer_query.paginate(page = page_num_query).items
+    elif count_query:
+        customers = customer_query.paginate(per_page = count_query).items
+    else:
+        customers = customer_query.all()
+
+    # get rentals
+    customer_list = []
+    for rental in rentals:
+        customer_list.append(Customer.query.get(rental.customer_id))
     
-    rentals_response = []
+    rental_response = []
+    for customer in customers:
+        if customer in customer_list:
+            rental_response.append(customer.to_dict())
+
+    """rentals_response = []
     for rental in rentals:
         if rental.video_id == video.id:
             customer = Customer.query.get(rental.customer_id)
@@ -115,7 +150,7 @@ def rentals_by_video(video_id):
                                 "name": customer.name,
                                 "phone": customer.phone,
                                 "postal_code": customer.postal_code
-                                })
+                                })"""
 
 
-    return make_response(jsonify(rentals_response), 200)
+    return make_response(jsonify(rental_response), 200)

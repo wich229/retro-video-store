@@ -19,27 +19,23 @@ def checkout_video():
         video = validate_model(Video, checkout_data["video_id"])
     except KeyError as err:
         abort(make_response({"message":f"Missing {err.args[0]}."}, 400))
-        
-    
+                
+    # get rental count and determine if customer has already checked out the video
     # check if the customer did rent the video
     rentals = Rental.query.all()
     rental_count = 0
     for rental in rentals:
         if rental.video_id == video.id:
             rental_count += 1
-        if rental.video_id == video.id and rental.customer_id == customer.id:
+        if rental.video_id == video.id and rental.customer_id == customer.id and rental.status == "checked out":
             msg = f"Customer {customer.id} is already renting video {video.id}."
             abort(make_response({"message":msg}, 400))
                 
-                
-    # get rental count and determine if customer has already checked out the video
-
     available_inventory = video.total_inventory - rental_count
     # error handling: if there are no videos left to be rented
     if available_inventory <= 0:
         abort(make_response({"message":"Could not perform checkout"}, 400))
     video.available_inventory = available_inventory - 1
-
 
     # -------if checkout is successful------
     # updates the amount of videos the customer has checked out in the customer database
@@ -47,7 +43,8 @@ def checkout_video():
 
     new_rental = Rental(video_id = video.id,
                         customer_id = customer.id,
-                        due_date = datetime.date.today() + datetime.timedelta(days=7)
+                        due_date = datetime.date.today() + datetime.timedelta(days=7),
+                        status = "checked out"
                         )
 
     check_out_response = {"customer_id": new_rental.customer_id,
@@ -82,12 +79,8 @@ def checkin_video():
         if rental.video_id == video.id:
             rental_count += 1
         if (rental.customer_id == customer.id 
-                and rental.video_id == video.id):
+                and rental.video_id == video.id and rental.status == "checked out"):
                 rental_found = True
-
-    for rental in rentals:
-        if rental.video_id == video.id and rental.customer_id == customer.id:
-            rental_found = True
 
     # error handling: if no record of rental exists
     if rental_found == False:
@@ -100,6 +93,7 @@ def checkin_video():
     
     # remove video from customer's checked out count
     customer.videos_checked_out_count -= 1
+    rental.status = "checked in"
 
     check_in_response = {
     "customer_id": customer.id,
@@ -109,7 +103,8 @@ def checkin_video():
     }
 
     # delete record of rental from database
-    Rental.query.filter_by(customer_id=customer.id, video_id = video.id).delete()
+    # go back go status
+    # Rental.query.filter_by(customer_id=customer.id, video_id = video.id).delete()
     db.session.commit()
 
     return make_response(jsonify(check_in_response), 200)

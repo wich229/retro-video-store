@@ -21,8 +21,5 @@ class Video(db.Model):
         pass
     
     
-    # available_inventory is a function:
-    # total will be video.total_inventory - vedio_id with check_out status amount
-    # + vedio_id with check_in status amount
     def available_inventory(id):
         pass
