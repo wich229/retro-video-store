@@ -62,8 +62,6 @@ def create_video():
 
     return make_response(jsonify(new_video.to_dict()), 201)
 
-
-
 # PUT /videos/<id>
 @videos_bp.route("/<video_id>", methods=["PUT"])
 def update_video_by_id(video_id):
@@ -141,16 +139,5 @@ def rentals_by_video(video_id):
     for customer in customers:
         if customer in customer_list:
             rental_response.append(customer.to_dict())
-
-    """rentals_response = []
-    for rental in rentals:
-        if rental.video_id == video.id:
-            customer = Customer.query.get(rental.customer_id)
-            rentals_response.append({"due_date": rental.due_date,
-                                "name": customer.name,
-                                "phone": customer.phone,
-                                "postal_code": customer.postal_code
-                                })"""
-
 
     return make_response(jsonify(rental_response), 200)
